@@ -1,3 +1,4 @@
+from sqlalchemy.exc import NoResultFound
 from sqlmodel import  Session, select
 
 from models import PokemonBase, PokemonID
@@ -13,8 +14,15 @@ def createPokemon_db(pokemon:PokemonBase, session:Session):
 
 def show_all_pokemon_db(session: Session):
     #return session.query(PokemonID).all()
-    #return session.exec(select(PokemonID)).all()
-    statement = select(PokemonID)
-    results = session.exec(statement)
-    return results
+    #session.exec(select(PokemonID).gr)
+    return session.exec(select(PokemonID))
+    #statement = select(PokemonID)
+    #results = session.exec(statement)
+    #return results
+
+def find_one_pokemon_db(id:int, session:Session):
+    try:
+        return session.get_one(PokemonID, id)
+    except NoResultFound:
+        return None
 
