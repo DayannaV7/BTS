@@ -5,7 +5,7 @@ from sqlmodel.orm import session
 from operations_csv import createPokemon, showPokemons, showPokemon, deletePokemon
 from models import (PokemonBase, PokemonID)
 from db import SessionDep, create_all_tables
-from operations_db import createPokemon_db, show_all_pokemon_db
+from operations_db import createPokemon_db, show_all_pokemon_db, find_one_pokemon_db
 
 app = FastAPI(lifespan=create_all_tables)
 
@@ -19,8 +19,8 @@ async def show_pokemons(session:SessionDep):
     return show_all_pokemon_db(session)
 
 @app.get("/pokemon/{id}", response_model=PokemonID)
-async def show_one_pokemon(id:int):
-    pokemon = showPokemon(id)
+async def show_one_pokemon(id:int, session:SessionDep):
+    pokemon = find_one_pokemon_db(id, session)
     if not(pokemon):
         raise HTTPException(status_code=404, detail=f"{id} Pokemon not found")
     return pokemon
