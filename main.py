@@ -3,9 +3,9 @@ from fastapi import FastAPI, HTTPException
 from sqlmodel.orm import session
 
 from operations_csv import createPokemon, showPokemons, showPokemon, deletePokemon
-from models import (PokemonBase, PokemonID)
+from models import (PokemonBase, PokemonID, PokemonUpdate)
 from db import SessionDep, create_all_tables
-from operations_db import createPokemon_db, show_all_pokemon_db, find_one_pokemon_db
+from operations_db import createPokemon_db, show_all_pokemon_db, find_one_pokemon_db, update_one_pokemon_db
 
 app = FastAPI(lifespan=create_all_tables)
 
@@ -24,6 +24,13 @@ async def show_one_pokemon(id:int, session:SessionDep):
     if not(pokemon):
         raise HTTPException(status_code=404, detail=f"{id} Pokemon not found")
     return pokemon
+
+@app.patch("/pokemon/{id}", response_model=PokemonID, response_model_exclude={"name", "type"})
+async def update_pokemon(id:int, pokemon:PokemonUpdate, session:SessionDep):
+    update = update_one_pokemon_db(id, pokemon, session)
+    if not (update):
+        raise HTTPException(status_code=404, detail=f"{id} Pokemon not found")
+    return update
 
 @app.delete("/pokemon/{id}", response_model=PokemonBase)
 async def delete_one_pokemon(id:int):
