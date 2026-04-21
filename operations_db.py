@@ -1,4 +1,4 @@
-from sqlmodel import  Session
+from sqlmodel import  Session, select
 
 from models import PokemonBase, PokemonID
 
@@ -12,4 +12,9 @@ def createPokemon_db(pokemon:PokemonBase, session:Session):
     return new_pokemon
 
 def show_all_pokemon_db(session: Session):
-    return session.query(PokemonID).all()
+    #return session.query(PokemonID).all()
+    #return session.exec(select(PokemonID)).all()
+    statement = select(PokemonID)
+    results = session.exec(statement)
+    return results
+
