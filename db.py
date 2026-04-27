@@ -1,17 +1,21 @@
-
+import os
+from dotenv import load_dotenv
 from sqlmodel import Session, create_engine, SQLModel
 from fastapi import FastAPI, Depends
 from typing import Annotated
 
+load_dotenv()
+clever_db = os.getenv("CLEVER_URI")
 
 sqlite_name="pokedex.sqlite3"
 sqlite_url=(f"sqlite:///{sqlite_name}")
 
-engine = create_engine(sqlite_url)
+engine = create_engine(clever_db)
 
 def create_all_tables(app: FastAPI):
-    SQLModel.metadata.create_all(engine)
-    yield 
+    if os.getenv("ENV") == "dev":
+        SQLModel.metadata.create_all(engine)
+        yield
 
 
 def get_session()->Session:
