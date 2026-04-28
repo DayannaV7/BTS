@@ -1,12 +1,14 @@
 from typing import Optional
 from sqlmodel import SQLModel, Field
-from pokemon_types import PokemonType
 
 #MODELO INTEGRANTES
 class IntegranteBase(SQLModel):
     nombre: str = Field(min_length=2, max_length=64, description="Nombre del integrante")
     edad: int = Field(gt=0, le=120, description="Edad del integrante")
     altura: float = Field(gt=0.0, le=3.0, description="Altura en metros, ej: 1.78")
+
+class Integrante(IntegranteBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
 
 
 #MODELO ÁLBUM
@@ -20,7 +22,6 @@ class Album(AlbumBase, table=True):
 
 
 class AlbumUpdate(SQLModel):
-    """Solo los campos que se pueden editar en un álbum"""
     nombre: str | None = Field(default=None, min_length=1, max_length=128)
     num_canciones: int | None = Field(default=None, gt=0)
 
