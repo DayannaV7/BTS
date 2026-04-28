@@ -1,27 +1,38 @@
-# from pydantic import BaseModel, Field
-from email.policy import default
-
-from pokemon_types import PokemonType
 from typing import Optional
 from sqlmodel import SQLModel, Field
+from pokemon_types import PokemonType
+
+#MODELO INTEGRANTES
+class IntegranteBase(SQLModel):
+    nombre: str = Field(min_length=2, max_length=64, description="Nombre del integrante")
+    edad: int = Field(gt=0, le=120, description="Edad del integrante")
+    altura: float = Field(gt=0.0, le=3.0, description="Altura en metros, ej: 1.78")
 
 
-class PokemonBase(SQLModel):
-    name: str | None = Field(default=None,
-                             min_length=3,
-                             max_length=64)
-    type: PokemonType | None = Field(default=None,
-                                     )
-    level: int | None = Field(default=None,
-                              gt=0,
-                              le=100)
+#MODELO ÁLBUM
+class AlbumBase(SQLModel):
+    nombre: str = Field(min_length=1, max_length=128, description="Nombre del álbum")
+    num_canciones: int = Field(gt=0, description="Número de canciones del álbum")
 
 
-class PokemonID(PokemonBase, table=True):
-    id: int | None = Field(default=None, primary_key=True, gt=0)
+class Album(AlbumBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
 
-class PokemonUpdate(PokemonBase):
-    type: PokemonType = Field(None, exclude=True)
-    name: str | None = Field(None,exclude=True)
-    level : int | None = Field(default=None,gt=1,
-                              le=100)
+
+class AlbumUpdate(SQLModel):
+    """Solo los campos que se pueden editar en un álbum"""
+    nombre: str | None = Field(default=None, min_length=1, max_length=128)
+    num_canciones: int | None = Field(default=None, gt=0)
+
+
+#MODELO TOURS
+class TourBase(SQLModel):
+    nombre: str = Field(min_length=1, max_length=128, description="Nombre del tour")
+    ciudades_visitadas: str = Field(
+        min_length=1,
+        description="Ciudades separadas por coma, ej: 'Seúl, Buenos Aires, Madrid'"
+    )
+
+
+class Tour(TourBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
