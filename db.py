@@ -7,9 +7,6 @@ from typing import Annotated
 load_dotenv()
 clever_db = os.getenv("CLEVER_URI")
 
-sqlite_name="pokedex.sqlite3"
-sqlite_url=(f"sqlite:///{sqlite_name}")
-
 engine = create_engine(clever_db)
 
 def create_all_tables(app: FastAPI):
@@ -24,4 +21,3 @@ def get_session()->Session:
 
 
 SessionDep = Annotated[Session, Depends(get_session)]
-
